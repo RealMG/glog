@@ -8,7 +8,7 @@ AC_PREREQ(2.57)
 AC_INIT(glog, 0.3.5, opensource@google.com)
 # The argument here is just something that should be in the current directory
 # (for sanity checking)
-AC_CONFIG_SRCDIR(README)
+AC_CONFIG_SRCDIR(README.md)
 AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE
 AM_CONFIG_HEADER(src/config.h)
@@ -31,6 +31,7 @@ AC_HEADER_STDC
 AC_CHECK_HEADER(stdint.h, ac_cv_have_stdint_h=1, ac_cv_have_stdint_h=0)
 AC_CHECK_HEADER(sys/types.h, ac_cv_have_systypes_h=1, ac_cv_have_systypes_h=0)
 AC_CHECK_HEADER(inttypes.h, ac_cv_have_inttypes_h=1, ac_cv_have_inttypes_h=0)
+AC_CHECK_HEADER(pwd.h, ac_cv_have_pwd_h=1, ac_cv_have_pwd_h=0)
 AC_CHECK_HEADERS(unistd.h, ac_cv_have_unistd_h=1, ac_cv_have_unistd_h=0)
 AC_CHECK_HEADERS(syscall.h)
 AC_CHECK_HEADERS(sys/syscall.h)
@@ -205,6 +206,15 @@ AC_CXX_USING_OPERATOR
 AC_PC_FROM_UCONTEXT(AC_MSG_WARN(Could not find the PC.  Will not output failed addresses...))
 
 AC_DEFINE_UNQUOTED(TEST_SRC_DIR, "$srcdir", [location of source code])
+
+AC_ARG_ENABLE(unsymbolized-traces,
+              AS_HELP_STRING([--enable-unsymbolized-traces],
+                             [Print raw pc values when symbolization is failed.]),
+              enable_unsymbolized_traces=yes)
+if test x"$enable_unsymbolized_traces" = x"yes"; then
+  AC_DEFINE(PRINT_UNSYMBOLIZED_STACK_TRACES, 1,
+            [define if we should print raw pc values on symbolization failure.])
+fi
 
 # These are what's needed by logging.h.in and raw_logging.h.in
 AC_SUBST(ac_google_start_namespace)
